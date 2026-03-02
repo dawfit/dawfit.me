@@ -1,81 +1,191 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Pages</title>
-  <style>
-    body {
-      font-family: sans-serif;
-      max-width: 500px;
-      margin: 40px auto;
-      padding: 0 20px;
-      background: #fff;
-      color: #111;
-    }
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>Dawson Fitness — Tools</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#f0f3f8;
+  --s1:#ffffff;
+  --s2:#e4eaf4;
+  --border:#c8d3e4;
+  --ink:#071a3e;
+  --ink2:#3d5278;
+  --ink3:#7a90b0;
+  --blue:#0155b7;
+  --blue-dk:#0044a0;
+  --blue-dim:rgba(1,85,183,.10);
+  --teal:#4fc3c3;
+  --r:12px;
+  --fd:'Barlow Condensed',sans-serif;
+  --fb:'Barlow',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:var(--fb);
+  background:var(--bg);
+  color:var(--ink);
+  min-height:100dvh;
+  overflow-x:hidden;
+}
 
-    h1 { margin-bottom: 8px; }
+/* ── Top bar ── */
+.bar{
+  position:sticky;top:0;z-index:100;
+  background:var(--blue);
+  border-bottom:3px solid var(--teal);
+  height:52px;
+  display:flex;align-items:center;
+  padding:0 16px;
+}
+.logo{
+  font-family:var(--fd);font-weight:900;font-size:20px;
+  letter-spacing:.5px;color:#fff;white-space:nowrap;
+}
+.logo em{color:var(--teal);font-style:normal}
 
-    p { color: #666; font-size: 0.9rem; margin-bottom: 24px; }
+/* colour bar */
+.colour-strip{
+  height:4px;
+  background:linear-gradient(to right,#4fc3c3 25%,#b2d145 25% 50%,#f1af3f 50% 75%,#f16e42 75%);
+}
 
-    a {
-      display: block;
-      padding: 14px 16px;
-      margin-bottom: 10px;
-      background: #f0f5ff;
-      border: 1px solid #c7d9ff;
-      border-radius: 8px;
-      text-decoration: none;
-      color: #2563eb;
-      font-size: 1rem;
-    }
+/* ── Page ── */
+.page{max-width:600px;margin:0 auto;padding:0 16px 80px}
 
-    a:hover { background: #dbeafe; }
-  </style>
+.section{margin-top:28px}
+.sec-eyebrow{
+  font-family:var(--fd);font-size:11px;font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--teal);margin-bottom:6px;
+}
+.sec-heading{
+  font-family:var(--fd);font-size:clamp(26px,7vw,34px);
+  font-weight:900;line-height:1.05;letter-spacing:.3px;
+  color:var(--blue);margin-bottom:4px;
+}
+.sec-sub{font-size:14px;color:var(--ink2);line-height:1.45;margin-bottom:16px}
+
+/* ── Tool cards ── */
+.tool-cards{display:flex;flex-direction:column;gap:8px;margin-top:4px;}
+
+.tool-card{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;
+  background:var(--s1);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  text-decoration:none;
+  color:var(--ink);
+  transition:border-color .12s,box-shadow .12s;
+  position:relative;overflow:hidden;
+}
+.tool-card::after{
+  content:"";position:absolute;inset:0;
+  background:var(--blue-dim);
+  opacity:0;transition:opacity .12s;pointer-events:none;
+}
+.tool-card:hover{border-color:var(--blue);box-shadow:0 0 0 2px var(--blue),inset 0 0 0 3px var(--blue-dim);}
+.tool-card:hover::after{opacity:1}
+.tool-card:active{opacity:.8}
+
+.tc-num{
+  flex:0 0 38px;height:38px;border-radius:10px;
+  background:var(--s2);border:1px solid var(--border);
+  display:grid;place-items:center;
+  font-family:var(--fd);font-weight:900;font-size:15px;
+  color:var(--ink3);flex-shrink:0;
+  transition:all .12s;
+}
+.tool-card:hover .tc-num{
+  background:var(--blue-dim);border-color:var(--blue);color:var(--blue);
+}
+.tc-body{flex:1;min-width:0}
+.tc-name{
+  font-family:var(--fd);font-weight:700;font-size:17px;
+  letter-spacing:.15px;color:var(--ink);line-height:1.1;
+}
+.tc-meta{font-size:12.5px;color:var(--ink2);margin-top:2px}
+.tc-arrow{
+  color:var(--ink3);font-size:18px;flex-shrink:0;
+  transition:color .12s,transform .12s;
+}
+.tool-card:hover .tc-arrow{color:var(--blue);transform:translateX(2px)}
+
+/* ── Status / error ── */
+#status{
+  font-family:var(--fd);font-size:13px;font-weight:600;
+  color:var(--ink3);margin-bottom:8px;letter-spacing:.3px;
+}
+</style>
 </head>
 <body>
-  <h1>My Pages</h1>
-  <p id="status">Loading...</p>
-  <div id="links"></div>
 
-  <script>
-    (async () => {
-      const status = document.getElementById('status');
-      const linksDiv = document.getElementById('links');
+<div class="bar">
+  <div class="logo">DAWSON <em>FIT</em></div>
+</div>
+<div class="colour-strip"></div>
 
-      try {
-        const host = window.location.hostname.split('.');
-        if (host[1] !== 'github' || host[2] !== 'io') {
-          status.textContent = 'Deploy to GitHub Pages to see your files.';
-          return;
-        }
+<div class="page">
+  <div class="section">
+    <div class="sec-eyebrow">Tools</div>
+    <h2 class="sec-heading">Choose a Tool</h2>
+    <p class="sec-sub" id="status">Loading…</p>
+    <div class="tool-cards" id="links"></div>
+  </div>
+</div>
 
-        const username = host[0];
-        const pathParts = window.location.pathname.split('/').filter(Boolean);
-        const repo = pathParts.length > 0 ? pathParts[0] : `${username}.github.io`;
-        const dir = pathParts.length > 1 ? pathParts.slice(1).join('/') : '';
+<script>
+(async () => {
+  const status = document.getElementById('status');
+  const linksDiv = document.getElementById('links');
 
-        const res = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/${dir}`);
-        if (!res.ok) throw new Error(`API error ${res.status}`);
+  try {
+    const host = window.location.hostname.split('.');
+    if (host[1] !== 'github' || host[2] !== 'io') {
+      status.textContent = 'Deploy to GitHub Pages to auto-detect files.';
+      return;
+    }
 
-        const files = (await res.json()).filter(f =>
-          f.type === 'file' && f.name.endsWith('.html') && f.name !== 'index.html'
-        );
+    const username = host[0];
+    const pathParts = window.location.pathname.split('/').filter(Boolean);
+    const repo = pathParts.length > 0 ? pathParts[0] : `${username}.github.io`;
+    const dir = pathParts.length > 1 ? pathParts.slice(1).join('/') : '';
 
-        if (!files.length) { status.textContent = 'No HTML files found.'; return; }
+    const res = await fetch(`https://api.github.com/repos/${username}/${repo}/contents/${dir}`);
+    if (!res.ok) throw new Error(`GitHub API error ${res.status}`);
 
-        status.textContent = `${files.length} page(s)`;
-        files.forEach(f => {
-          const a = document.createElement('a');
-          a.href = f.name;
-          a.textContent = f.name.replace('.html', '').replace(/[-_]/g, ' ');
-          linksDiv.appendChild(a);
-        });
+    const files = (await res.json()).filter(f =>
+      f.type === 'file' && f.name.endsWith('.html') && f.name !== 'index.html'
+    );
 
-      } catch (e) {
-        status.textContent = `Error: ${e.message}`;
-      }
-    })();
-  </script>
+    if (!files.length) { status.textContent = 'No tools found.'; return; }
+
+    status.textContent = `${files.length} tool${files.length !== 1 ? 's' : ''} available`;
+
+    files.forEach((f, i) => {
+      const name = f.name.replace('.html', '').replace(/[-_]/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+      const card = document.createElement('a');
+      card.className = 'tool-card';
+      card.href = f.name;
+      card.innerHTML = `
+        <div class="tc-num">${i + 1}</div>
+        <div class="tc-body">
+          <div class="tc-name">${name}</div>
+          <div class="tc-meta">${f.name}</div>
+        </div>
+        <div class="tc-arrow">›</div>`;
+      linksDiv.appendChild(card);
+    });
+
+  } catch (e) {
+    document.getElementById('status').textContent = `Error: ${e.message}`;
+  }
+})();
+</script>
 </body>
 </html>
