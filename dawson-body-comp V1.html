@@ -1,0 +1,936 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
+<title>Dawson Body Composition</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:ital,wght@0,400;0,600;0,700;0,800;0,900;1,700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet"/>
+<style>
+/* ── Tokens — Dawson College palette ─── */
+:root{
+  --bg:#f0f3f8;
+  --s1:#ffffff;
+  --s2:#e4eaf4;
+  --border:#c8d3e4;
+  --ink:#071a3e;
+  --ink2:#3d5278;
+  --ink3:#7a90b0;
+
+  /* Primary */
+  --blue:#0155b7;
+  --blue-dk:#0044a0;
+  --blue-dim:rgba(1,85,183,.10);
+
+  /* Accents — from Dawson site swatches */
+  --teal:#4fc3c3;
+  --lime:#b2d145;
+  --amber:#f1af3f;
+  --coral:#f16e42;
+
+  /* Semantic aliases */
+  --accent:var(--blue);
+  --accent-dk:var(--blue-dk);
+  --accent-dim:var(--blue-dim);
+  --navy:var(--blue);
+  --navy-mid:var(--blue-dk);
+  --navy-light:#1a73c8;
+
+  --r:12px;
+  --fd:'Barlow Condensed',sans-serif;
+  --fb:'Barlow',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{
+  font-family:var(--fb);
+  background:var(--bg);
+  color:var(--ink);
+  min-height:100dvh;
+  overflow-x:hidden;
+}
+
+/* ── Top bar ────────────────────────── */
+.bar{
+  position:sticky;top:0;z-index:100;
+  background:var(--navy);
+  border-bottom:3px solid var(--teal);
+  height:52px;
+  display:flex;align-items:center;
+  padding:0 16px;
+  gap:14px;
+}
+.logo{
+  font-family:var(--fd);font-weight:900;font-size:20px;
+  letter-spacing:.5px;color:#ffffff;white-space:nowrap;
+  flex-shrink:0;
+}
+.logo em{color:var(--teal);font-style:normal}
+
+/* progress track */
+.prog-track{
+  flex:1;height:4px;
+  background:rgba(255,255,255,.25);
+  border-radius:999px;overflow:hidden;
+}
+.prog-fill{
+  height:100%;
+  background:var(--teal);
+  border-radius:999px;
+  width:0%;
+  transition:width .4s cubic-bezier(.4,0,.2,1);
+}
+.prog-label{
+  font-family:var(--fd);font-size:13px;font-weight:700;
+  color:rgba(255,255,255,.8);white-space:nowrap;flex-shrink:0;
+}
+
+/* ── Page sections ─────────────────── */
+.page{max-width:600px;margin:0 auto;padding:0 16px 80px}
+
+/* ── Section block ─────────────────── */
+.section{margin-top:28px}
+.sec-eyebrow{
+  font-family:var(--fd);font-size:11px;font-weight:700;
+  letter-spacing:2.5px;text-transform:uppercase;
+  color:var(--teal);margin-bottom:6px;
+}
+.sec-heading{
+  font-family:var(--fd);font-size:clamp(26px,7vw,34px);
+  font-weight:900;line-height:1.05;letter-spacing:.3px;
+  color:var(--blue);margin-bottom:4px;
+}
+.sec-sub{font-size:14px;color:var(--ink2);line-height:1.45;margin-bottom:16px}
+
+/* ── Test cards ─────────────────────── */
+.test-cards{
+  display:flex;flex-direction:column;gap:8px;
+  margin-top:12px;
+}
+.test-card{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 16px;
+  background:var(--s1);
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  cursor:pointer;
+  transition:border-color .12s,box-shadow .12s;
+  text-align:left;width:100%;
+  position:relative;overflow:hidden;
+}
+.test-card::after{
+  content:"";position:absolute;
+  inset:0;
+  background:var(--blue-dim);
+  opacity:0;transition:opacity .12s;
+  pointer-events:none;
+}
+.test-card:active{opacity:.8}
+.test-card.sel{
+  border-color:var(--blue);
+  box-shadow:0 0 0 2px var(--blue),inset 0 0 0 3px var(--blue-dim);
+}
+.test-card.sel::after{opacity:1}
+
+.tc-num{
+  flex:0 0 38px;height:38px;border-radius:10px;
+  background:var(--s2);border:1px solid var(--border);
+  display:grid;place-items:center;
+  font-family:var(--fd);font-weight:900;font-size:15px;
+  color:var(--ink3);
+  transition:all .12s;flex-shrink:0;
+}
+.test-card.sel .tc-num{
+  background:var(--blue-dim);border-color:var(--blue);color:var(--blue);
+}
+.tc-body{flex:1;min-width:0}
+.tc-name{
+  font-family:var(--fd);font-weight:700;font-size:17px;
+  letter-spacing:.15px;color:var(--ink);line-height:1.1;
+}
+.tc-meta{font-size:12.5px;color:var(--ink2);margin-top:2px}
+.tc-arrow{
+  color:var(--ink3);font-size:18px;flex-shrink:0;
+  transition:color .12s,transform .12s;
+}
+.test-card.sel .tc-arrow{color:var(--blue);transform:translateX(2px)}
+
+/* ── Form fields ─────────────────────── */
+.field-group{
+  background:var(--s1);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+  margin-bottom:10px;
+}
+.field-group-label{
+  padding:10px 14px 8px;
+  border-bottom:1px solid var(--border);
+  font-family:var(--fd);font-size:11px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;color:var(--blue);
+}
+.field-row{display:grid;grid-template-columns:1fr 1fr}
+.field-row .field:first-child{border-right:1px solid var(--border)}
+/* When gender is hidden, single-col the row */
+.field-row:has(> .hidden){grid-template-columns:1fr}
+.field-row:has(> .hidden) .field:first-child{border-right:none}
+.field{padding:12px 14px}
+.field-label{
+  font-size:11px;font-weight:600;letter-spacing:.7px;
+  text-transform:uppercase;color:var(--ink2);margin-bottom:5px;
+}
+select{
+  width:100%;background:transparent;border:none;outline:none;
+  font-family:var(--fb);font-size:15px;font-weight:500;
+  color:var(--ink);-webkit-appearance:none;appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%238fa4bc'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 0 center;
+  padding-right:16px;cursor:pointer;
+}
+select option{background:#ffffff;color:#0f1c38}
+
+/* Big single number input */
+.result-entry{
+  padding:14px 16px 16px;
+  display:flex;align-items:flex-end;gap:8px;
+}
+.result-entry input{
+  flex:1;background:transparent;border:none;outline:none;
+  font-family:var(--fd);font-weight:900;font-size:clamp(48px,14vw,72px);
+  color:var(--ink);letter-spacing:.5px;line-height:1;
+  -webkit-appearance:none;appearance:none;
+  -moz-appearance:textfield;
+}
+.result-entry input::-webkit-outer-spin-button,
+.result-entry input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.result-entry input::placeholder{color:var(--ink3)}
+.result-unit-lbl{
+  font-family:var(--fd);font-size:20px;font-weight:700;
+  color:var(--ink2);padding-bottom:6px;flex-shrink:0;
+}
+.result-hint-row{
+  padding:0 14px 12px;
+  font-size:13px;color:var(--ink2);line-height:1.4;
+}
+
+/* Compact dual number inputs (WHR and BMI) */
+.compact-entry{padding:10px 14px 12px}
+.compact-num{
+  display:block;width:100%;
+  background:transparent;border:none;outline:none;
+  font-family:var(--fd);font-weight:900;
+  font-size:clamp(34px,10vw,54px);
+  color:var(--ink);letter-spacing:.5px;line-height:1;
+  -webkit-appearance:none;appearance:none;
+  -moz-appearance:textfield;
+  margin-top:4px;
+}
+.compact-num::-webkit-outer-spin-button,
+.compact-num::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.compact-num::placeholder{color:var(--ink3)}
+
+/* ── Calculate button ────────────────── */
+.calc-btn{
+  width:100%;
+  padding:18px;
+  background:var(--blue);
+  color:#ffffff;
+  border:none;border-left:4px solid var(--teal);border-radius:var(--r);
+  font-family:var(--fd);font-size:22px;font-weight:900;
+  letter-spacing:.5px;cursor:pointer;
+  transition:background .15s,transform .08s;
+  margin-top:4px;
+}
+.calc-btn:hover{background:var(--blue-dk)}
+.calc-btn:active{transform:scale(.98)}
+
+/* ── Result panel ── */
+.result-panel{
+  display:none;
+  flex-direction:column;
+  gap:12px;
+  animation:slideIn .35s cubic-bezier(.2,0,.2,1) both;
+}
+.result-panel.show{display:flex}
+@keyframes slideIn{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+/* Rating hero */
+.rating-hero{
+  border-radius:var(--r);
+  padding:28px 20px 22px;
+  text-align:center;
+  position:relative;overflow:hidden;
+  background:var(--blue);
+  border:none;
+  border-bottom:4px solid var(--teal);
+}
+.rh-glow{
+  position:absolute;top:-60px;left:50%;transform:translateX(-50%);
+  width:280px;height:280px;border-radius:50%;
+  pointer-events:none;
+}
+.rh-label{
+  font-family:var(--fd);font-size:11px;font-weight:700;
+  letter-spacing:3px;text-transform:uppercase;
+  color:rgba(255,255,255,.6);margin-bottom:6px;
+  position:relative;
+}
+.rh-word{
+  font-family:var(--fd);font-size:clamp(48px,14vw,72px);
+  font-weight:900;line-height:1;letter-spacing:.5px;
+  position:relative;
+}
+.rh-sub{
+  font-family:var(--fd);font-size:15px;font-weight:600;
+  letter-spacing:.5px;
+  color:rgba(255,255,255,.6);margin-top:8px;position:relative;
+}
+
+/* Band bar — 4 segments for risk levels */
+.band-bar{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:4px;
+  margin-top:18px;position:relative;
+}
+.band-seg{
+  height:10px;border-radius:999px;
+  background:rgba(255,255,255,.15);
+  transition:background .3s,box-shadow .3s;
+}
+.band-labels{
+  display:flex;justify-content:space-between;
+  margin-top:5px;
+}
+.band-labels span{
+  font-family:var(--fd);font-size:10px;font-weight:700;
+  letter-spacing:.3px;color:rgba(255,255,255,.45);
+  text-align:center;flex:1;
+}
+
+/* Info rows */
+.info-block{
+  background:var(--s1);border:1px solid var(--border);
+  border-radius:var(--r);overflow:hidden;
+}
+.info-row{
+  display:flex;align-items:center;
+  justify-content:space-between;
+  padding:13px 16px;
+  border-bottom:1px solid var(--border);
+}
+.info-row:last-child{border-bottom:none}
+.ir-key{font-size:13px;color:var(--ink2)}
+.ir-val{
+  font-family:var(--fd);font-size:16px;font-weight:700;
+  color:var(--ink);text-align:right;max-width:60%;
+}
+.ir-val.risk{font-size:15px}
+
+/* Source block */
+.source-block{
+  background:var(--s1);border:1px solid var(--border);
+  border-radius:var(--r);padding:14px 16px;
+}
+.source-label{
+  font-family:var(--fd);font-size:11px;font-weight:700;
+  letter-spacing:2px;text-transform:uppercase;
+  color:var(--ink2);margin-bottom:6px;
+}
+.source-text{font-size:13px;color:var(--ink2);line-height:1.5}
+.source-text a{color:var(--blue);text-decoration:none}
+.source-text a:hover{text-decoration:underline}
+.source-caveat{
+  display:block;margin-top:7px;
+  font-size:12px;color:#f59e0b;
+  background:rgba(245,158,11,.07);
+  border:1px solid rgba(245,158,11,.2);
+  border-radius:8px;padding:6px 10px;line-height:1.4;
+}
+
+/* Try again */
+.try-again-btn{
+  width:100%;padding:16px;
+  background:transparent;
+  border:1px solid var(--border);
+  border-radius:var(--r);
+  font-family:var(--fd);font-size:18px;font-weight:800;
+  letter-spacing:.4px;color:var(--ink2);
+  cursor:pointer;transition:border-color .15s,color .15s;
+}
+.try-again-btn:hover{border-color:var(--blue);color:var(--blue)}
+
+/* Citations accordion */
+.cites-toggle{
+  display:flex;align-items:center;justify-content:space-between;
+  width:100%;padding:14px 16px;
+  background:var(--s1);border:1px solid var(--border);
+  border-radius:var(--r);
+  font-family:var(--fd);font-size:14px;font-weight:700;
+  letter-spacing:.3px;color:var(--ink2);
+  cursor:pointer;transition:border-color .12s,color .12s;
+}
+.cites-toggle:hover{border-color:var(--accent);color:var(--accent)}
+.cites-toggle svg{transition:transform .2s}
+.cites-toggle.open svg{transform:rotate(180deg)}
+.cites-body{display:none;flex-direction:column;gap:6px;margin-top:6px}
+.cites-body.open{display:flex}
+.cite-row{
+  display:flex;gap:12px;align-items:flex-start;
+  background:var(--s1);border:1px solid var(--border);
+  border-radius:var(--r);padding:12px 14px;
+}
+.cite-n{
+  flex:0 0 28px;height:28px;border-radius:8px;
+  background:var(--s2);border:1px solid var(--border);
+  display:grid;place-items:center;
+  font-family:var(--fd);font-weight:900;font-size:13px;
+  color:var(--ink3);flex-shrink:0;
+}
+.cite-body{flex:1;min-width:0}
+.cite-body a{
+  display:block;color:var(--blue);font-weight:600;
+  font-size:13px;text-decoration:none;line-height:1.3;
+}
+.cite-body a:hover{text-decoration:underline}
+.cite-body p{font-size:12px;color:var(--ink2);line-height:1.4;margin-top:3px}
+
+/* hidden util */
+.hidden{display:none!important}
+</style>
+</head>
+<body>
+
+<!-- sticky bar -->
+<div class="bar">
+  <div class="logo">DAWSON <em>BODY</em></div>
+  <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
+  <div class="prog-label" id="progLabel">Select test</div>
+</div>
+<div style="height:4px;background:linear-gradient(to right,#1a9e52 25%,#f1af3f 25% 50%,#f16e42 50% 75%,#e02020 75%)"></div>
+
+<div class="page">
+
+  <!-- ── SECTION 1: Choose assessment ── -->
+  <div class="section" id="sec1">
+    <div class="sec-eyebrow">Step 1</div>
+    <h2 class="sec-heading">Body Composition</h2>
+    <p class="sec-sub">Select one assessment — all 3 are available below.</p>
+    <div class="test-cards" id="testCards"></div>
+  </div>
+
+  <!-- ── SECTION 2: Your measurements ── -->
+  <div class="section" id="sec2">
+    <div class="sec-eyebrow">Step 2</div>
+    <h2 class="sec-heading" id="sec2Heading">Your Details</h2>
+    <p class="sec-sub" id="sec2Sub">Fill in your information, then enter your measurement.</p>
+
+    <!-- About You: sex + unit system -->
+    <div class="field-group" id="aboutGroup">
+      <div class="field-group-label">About You</div>
+      <div class="field-row" id="aboutRow">
+        <div class="field" id="genderWrap">
+          <div class="field-label">Sex</div>
+          <select id="gender">
+            <option value="female">Female</option>
+            <option value="male">Male</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="field-label">Units</div>
+          <select id="unitSys">
+            <option value="metric">Metric (cm / kg)</option>
+            <option value="imperial">Imperial (in / lbs)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic measurement inputs (rebuilt per test + unit) -->
+    <div id="dynamicInputs"></div>
+
+    <button class="calc-btn" id="calcBtn">Calculate My Risk →</button>
+  </div>
+
+  <!-- ── SECTION 3: Result ─────────── -->
+  <div class="section" id="sec3">
+    <div class="sec-eyebrow">Your Result</div>
+    <h2 class="sec-heading" id="sec3Heading">—</h2>
+
+    <div class="result-panel" id="resultPanel">
+
+      <!-- Risk hero -->
+      <div class="rating-hero">
+        <div class="rh-glow" id="rhGlow"></div>
+        <div class="rh-label">RISK LEVEL</div>
+        <div class="rh-word" id="rhWord">—</div>
+        <div class="rh-sub" id="rhSub">—</div>
+
+        <!-- 4-band risk bar: Low / Moderate / High / Very High -->
+        <div class="band-bar">
+          <div class="band-seg" id="bs0"></div>
+          <div class="band-seg" id="bs1"></div>
+          <div class="band-seg" id="bs2"></div>
+          <div class="band-seg" id="bs3"></div>
+        </div>
+        <div class="band-labels">
+          <span>Low</span><span>Moderate</span><span>High</span><span>Very High</span>
+        </div>
+      </div>
+
+      <!-- Summary rows -->
+      <div class="info-block" id="infoBlock"></div>
+
+      <!-- Citation -->
+      <div class="source-block">
+        <div class="source-label">Data Source</div>
+        <div class="source-text" id="sourceText">—</div>
+      </div>
+
+      <!-- Try again -->
+      <button class="try-again-btn" id="tryAgainBtn">← Try Another Assessment</button>
+
+      <!-- All citations (accordion) -->
+      <button class="cites-toggle" id="citesToggle" type="button">
+        <span>All standards &amp; citations</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 6l5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+      <div class="cites-body" id="citesBody"></div>
+
+    </div>
+  </div>
+
+</div><!-- /page -->
+
+<script>
+/* ── Assessment Data ────────────────────────────────────────────── */
+const TESTS = [
+  {
+    id: "waist",
+    n: 1,
+    name: "Waist Circumference",
+    meta: "Measured at the navel",
+    needsGender: true,
+    hint: "Stand relaxed. Measure around the abdomen at the navel (belly button) at the end of a normal exhale. Keep the tape horizontal and snug but not compressing the skin.",
+    cite: {
+      label: "WHO Expert Consultation: Waist Circumference & Waist–Hip Ratio (2008)",
+      url: "https://www.who.int/publications/i/item/9789241501491",
+      meta: "World Health Organization. WHO Expert Consultation 2008. Male risk zones: &lt;94 cm Low, 94–101 cm Moderate, 102–109 cm High, ≥110 cm Very High. Female: &lt;80 cm Low, 80–87 cm Moderate, 88–99 cm High, ≥100 cm Very High. Note: standard WHO landmark is mid-abdomen; navel used as a practical field approximation."
+    }
+  },
+  {
+    id: "whr",
+    n: 2,
+    name: "Waist-to-Hip Ratio",
+    meta: "Waist ÷ Hip · same unit for both",
+    needsGender: true,
+    hint: "Measure waist at the navel and hip at the widest point of the buttocks. Use the same unit for both measurements. The ratio is calculated automatically.",
+    cite: {
+      label: "ACSM's Guidelines for Exercise Testing & Prescription, 11th ed. (2022) + WHO (2008)",
+      url: "https://www.who.int/publications/i/item/9789241501491",
+      meta: "4-tier cutoffs adapted from ACSM 11th ed. (2022). Male: &lt;0.83 Low, 0.83–0.88 Moderate, 0.89–0.95 High, &gt;0.95 Very High. Female: &lt;0.71 Low, 0.71–0.77 Moderate, 0.78–0.82 High, &gt;0.82 Very High. Primary abdominal obesity thresholds: WHO Expert Consultation 2008 (Male ≥0.90, Female ≥0.85)."
+    }
+  },
+  {
+    id: "bmi",
+    n: 3,
+    name: "Body Mass Index",
+    meta: "Height & weight · weight ÷ height²",
+    needsGender: false,
+    hint: "BMI = weight (kg) ÷ height² (m). Enter your height and weight and BMI will be calculated for you. BMI is a screening tool — it does not directly measure body fat or distinguish fat from lean mass.",
+    cite: {
+      label: "WHO Global BMI Classification (2000, reaffirmed 2024)",
+      url: "https://www.who.int/europe/news-room/fact-sheets/item/a-healthy-lifestyle---who-recommendations",
+      meta: "WHO cut-offs: Underweight &lt;18.5 (Moderate Risk), Normal 18.5–24.9 (Low Risk), Overweight 25–29.9 (Moderate Risk), Obese Class I 30–34.9 (High Risk), Obese Class II/III ≥35 (Very High Risk). Limitation: BMI does not distinguish fat from lean mass and may misclassify muscular individuals."
+    }
+  }
+];
+
+/* ── Risk System ─────────────────────────────────────────────────── */
+const RISK_SHORT  = ["Low","Moderate","High","Very High"];
+const RISK_LABELS = ["Low Risk","Moderate Risk","High Risk","Very High Risk"];
+const RISK_KEYS   = ["LOW","MOD","HIGH","VHIGH"];
+const RISK_COLORS = { LOW:"#1a9e52", MOD:"#f1af3f", HIGH:"#f16e42", VHIGH:"#e02020" };
+
+/* ── State ───────────────────────────────────────────────────────── */
+let activeId = TESTS[0].id;
+let useMetric = true;
+
+/* ── Helpers ─────────────────────────────────────────────────────── */
+const $ = id => document.getElementById(id);
+function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
+function flashError(el){
+  el.style.outline = "2px solid #ef4444";
+  el.focus();
+  setTimeout(()=>{ el.style.outline = ""; }, 1800);
+}
+
+/* ── Risk Calculations ───────────────────────────────────────────── */
+
+// Waist Circumference — WHO 2008 (extended to 4 tiers)
+// Male:   <94  Low | 94–101  Moderate | 102–109  High | ≥110  Very High
+// Female: <80  Low | 80–87   Moderate | 88–99    High | ≥100  Very High
+function riskWaist(gender, waistCm){
+  if(gender === "male"){
+    if(waistCm < 94)  return 0;
+    if(waistCm < 102) return 1;
+    if(waistCm < 110) return 2;
+    return 3;
+  } else {
+    if(waistCm < 80)  return 0;
+    if(waistCm < 88)  return 1;
+    if(waistCm < 100) return 2;
+    return 3;
+  }
+}
+
+// Waist-to-Hip Ratio — ACSM 11th ed. (2022)
+// Male:   <0.83  Low | 0.83–0.88  Moderate | 0.89–0.95  High | >0.95  Very High
+// Female: <0.71  Low | 0.71–0.77  Moderate | 0.78–0.82  High | >0.82  Very High
+function riskWHR(gender, whr){
+  if(gender === "male"){
+    if(whr < 0.83) return 0;
+    if(whr < 0.89) return 1;
+    if(whr < 0.96) return 2;
+    return 3;
+  } else {
+    if(whr < 0.71) return 0;
+    if(whr < 0.78) return 1;
+    if(whr < 0.83) return 2;
+    return 3;
+  }
+}
+
+// BMI — WHO Classification
+// <18.5  Underweight → Moderate | 18.5–24.9  Normal → Low
+// 25–29.9  Overweight → Moderate | 30–34.9  Obese I → High | ≥35  Obese II/III → Very High
+function riskBMI(bmi){
+  if(bmi < 18.5) return 1;  // Underweight → Moderate Risk
+  if(bmi < 25.0) return 0;  // Normal → Low Risk
+  if(bmi < 30.0) return 1;  // Overweight → Moderate Risk
+  if(bmi < 35.0) return 2;  // Obese Class I → High Risk
+  return 3;                  // Obese Class II/III → Very High Risk
+}
+function bmiCategory(bmi){
+  if(bmi < 18.5) return "Underweight";
+  if(bmi < 25.0) return "Normal Weight";
+  if(bmi < 30.0) return "Overweight";
+  if(bmi < 35.0) return "Obese Class I";
+  if(bmi < 40.0) return "Obese Class II";
+  return "Obese Class III";
+}
+
+/* ── Progress Bar ────────────────────────────────────────────────── */
+function setProgress(pct, label){
+  $("progFill").style.width = pct + "%";
+  $("progLabel").textContent = label;
+}
+
+/* ── Render Test Cards ───────────────────────────────────────────── */
+function renderCards(){
+  const wrap = $("testCards");
+  wrap.innerHTML = "";
+  TESTS.forEach(t => {
+    const btn = document.createElement("button");
+    btn.className = "test-card" + (t.id === activeId ? " sel" : "");
+    btn.dataset.id = t.id;
+    btn.innerHTML = `
+      <div class="tc-num">${t.n}</div>
+      <div class="tc-body">
+        <div class="tc-name">${t.name}</div>
+        <div class="tc-meta">${t.meta}</div>
+      </div>
+      <div class="tc-arrow">›</div>`;
+    btn.onclick = () => {
+      activeId = t.id;
+      document.querySelectorAll(".test-card").forEach(b =>
+        b.classList.toggle("sel", b.dataset.id === t.id));
+      syncForm();
+      setTimeout(() => $("sec2").scrollIntoView({ behavior:"smooth", block:"start" }), 80);
+      setProgress(33, "Enter data");
+    };
+    wrap.appendChild(btn);
+  });
+}
+
+/* ── Build Dynamic Measurement Inputs ───────────────────────────── */
+function buildInputs(){
+  const lbl = useMetric ? "cm" : "in";
+  let html = "";
+
+  if(activeId === "waist"){
+    html = `
+      <div class="field-group">
+        <div class="field-group-label">Waist Measurement (${lbl})</div>
+        <div class="result-entry">
+          <input id="inp_a" type="number" inputmode="decimal"
+            placeholder="${useMetric ? '80' : '32'}" autocomplete="off"/>
+          <div class="result-unit-lbl">${lbl}</div>
+        </div>
+        <div class="result-hint-row">
+          ${useMetric
+            ? "Enter waist circumference at the navel in centimetres (e.g., 82)."
+            : "Enter waist circumference at the navel in inches (e.g., 32.5)."}
+        </div>
+      </div>`;
+
+  } else if(activeId === "whr"){
+    html = `
+      <div class="field-group">
+        <div class="field-group-label">Measurements (${lbl}) — same unit for both</div>
+        <div class="field-row">
+          <div class="field">
+            <div class="field-label">Waist (${lbl})</div>
+            <div class="compact-entry">
+              <input class="compact-num" id="inp_a" type="number" inputmode="decimal"
+                placeholder="${useMetric ? '80' : '32'}" autocomplete="off"/>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-label">Hip (${lbl})</div>
+            <div class="compact-entry">
+              <input class="compact-num" id="inp_b" type="number" inputmode="decimal"
+                placeholder="${useMetric ? '96' : '38'}" autocomplete="off"/>
+            </div>
+          </div>
+        </div>
+        <div class="result-hint-row">Waist at navel; hip at the widest point of the buttocks.</div>
+      </div>`;
+
+  } else if(activeId === "bmi"){
+    const wlbl = useMetric ? "kg" : "lbs";
+    html = `
+      <div class="field-group">
+        <div class="field-group-label">Height &amp; Weight</div>
+        <div class="field-row">
+          <div class="field">
+            <div class="field-label">Height (${lbl})</div>
+            <div class="compact-entry">
+              <input class="compact-num" id="inp_a" type="number" inputmode="decimal"
+                placeholder="${useMetric ? '170' : '67'}" autocomplete="off"/>
+            </div>
+          </div>
+          <div class="field">
+            <div class="field-label">Weight (${wlbl})</div>
+            <div class="compact-entry">
+              <input class="compact-num" id="inp_b" type="number" inputmode="decimal"
+                placeholder="${useMetric ? '70' : '154'}" autocomplete="off"/>
+            </div>
+          </div>
+        </div>
+        <div class="result-hint-row">
+          ${useMetric
+            ? "Height in centimetres (e.g., 170); weight in kilograms (e.g., 70)."
+            : "Height in total inches — e.g., 67 for 5′7″; weight in pounds (e.g., 154)."}
+        </div>
+      </div>`;
+  }
+
+  $("dynamicInputs").innerHTML = html;
+}
+
+/* ── Sync Form to Selected Test ──────────────────────────────────── */
+function syncForm(){
+  const t = TESTS.find(t => t.id === activeId);
+  $("sec2Heading").textContent = t.name;
+  $("sec2Sub").textContent = t.hint;
+
+  // Show/hide gender field (BMI uses same cutoffs for all sexes)
+  $("genderWrap").classList.toggle("hidden", !t.needsGender);
+
+  buildInputs();
+
+  // Hide result panel when test changes
+  $("resultPanel").classList.remove("show");
+  $("sec3Heading").textContent = "—";
+}
+
+/* ── Build All Citations ─────────────────────────────────────────── */
+function buildAllCites(){
+  const body = $("citesBody");
+  body.innerHTML = "";
+  TESTS.forEach(t => {
+    const row = document.createElement("div");
+    row.className = "cite-row";
+    row.innerHTML = `<div class="cite-n">${t.n}</div>
+      <div class="cite-body">
+        <a href="${t.cite.url}" target="_blank" rel="noopener">${t.cite.label}</a>
+        <p>${t.cite.meta}</p>
+      </div>`;
+    body.appendChild(row);
+  });
+}
+
+/* ── Calculate ───────────────────────────────────────────────────── */
+function calculate(){
+  const t = TESTS.find(t => t.id === activeId);
+  const genderVal = $("gender") ? $("gender").value : "female";
+  const metric = useMetric;
+
+  let riskIdx;
+  let displayRows = [];
+  let subText = "";
+
+  /* ---- Waist Circumference ---- */
+  if(activeId === "waist"){
+    const inpA = $("inp_a");
+    const raw = parseFloat(inpA.value);
+    if(!Number.isFinite(raw) || raw <= 0){ flashError(inpA); return; }
+
+    const waistCm = metric ? raw : raw * 2.54;
+    const g = genderVal === "other" ? "female" : genderVal;
+    riskIdx = riskWaist(g, waistCm);
+
+    subText = metric
+      ? `${raw} cm · at navel`
+      : `${raw} in (${waistCm.toFixed(1)} cm) · at navel`;
+
+    displayRows = [
+      { k: "Assessment",   v: "Waist Circumference" },
+      { k: "Measurement",  v: `${raw} ${metric ? "cm" : "in"}` },
+      ...(!metric ? [{ k: "In centimetres", v: `${waistCm.toFixed(1)} cm` }] : []),
+      { k: "Sex",          v: cap(genderVal) },
+      { k: "Risk Level",   v: RISK_LABELS[riskIdx], isRisk: true, color: RISK_COLORS[RISK_KEYS[riskIdx]] }
+    ];
+
+  /* ---- Waist-to-Hip Ratio ---- */
+  } else if(activeId === "whr"){
+    const inpA = $("inp_a"), inpB = $("inp_b");
+    const rawW = parseFloat(inpA.value), rawH = parseFloat(inpB.value);
+    if(!Number.isFinite(rawW) || rawW <= 0){ flashError(inpA); return; }
+    if(!Number.isFinite(rawH) || rawH <= 0){ flashError(inpB); return; }
+
+    const ratio = rawW / rawH;
+    const g = genderVal === "other" ? "female" : genderVal;
+    riskIdx = riskWHR(g, ratio);
+
+    subText = `WHR: ${ratio.toFixed(3)} · waist ÷ hip`;
+
+    displayRows = [
+      { k: "Assessment",  v: "Waist-to-Hip Ratio" },
+      { k: "Waist",       v: `${rawW} ${metric ? "cm" : "in"}` },
+      { k: "Hip",         v: `${rawH} ${metric ? "cm" : "in"}` },
+      { k: "WHR",         v: ratio.toFixed(3) },
+      { k: "Sex",         v: cap(genderVal) },
+      { k: "Risk Level",  v: RISK_LABELS[riskIdx], isRisk: true, color: RISK_COLORS[RISK_KEYS[riskIdx]] }
+    ];
+
+  /* ---- Body Mass Index ---- */
+  } else if(activeId === "bmi"){
+    const inpA = $("inp_a"), inpB = $("inp_b");
+    const rawH = parseFloat(inpA.value), rawW = parseFloat(inpB.value);
+    if(!Number.isFinite(rawH) || rawH <= 0){ flashError(inpA); return; }
+    if(!Number.isFinite(rawW) || rawW <= 0){ flashError(inpB); return; }
+
+    let heightM, weightKg;
+    if(metric){
+      heightM = rawH / 100;
+      weightKg = rawW;
+    } else {
+      heightM = (rawH * 2.54) / 100;
+      weightKg = rawW * 0.453592;
+    }
+
+    const bmi = weightKg / (heightM * heightM);
+    const cat = bmiCategory(bmi);
+    riskIdx = riskBMI(bmi);
+
+    subText = `BMI: ${bmi.toFixed(1)} · ${cat}`;
+
+    displayRows = [
+      { k: "Assessment", v: "Body Mass Index" },
+      { k: "Height",     v: metric ? `${rawH} cm` : `${rawH} in (${(rawH * 2.54).toFixed(0)} cm)` },
+      { k: "Weight",     v: metric ? `${rawW} kg` : `${rawW} lbs (${(rawW * 0.453592).toFixed(1)} kg)` },
+      { k: "BMI",        v: bmi.toFixed(1) },
+      { k: "Category",   v: cat },
+      { k: "Risk Level", v: RISK_LABELS[riskIdx], isRisk: true, color: RISK_COLORS[RISK_KEYS[riskIdx]] }
+    ];
+  }
+
+  /* ── Render Result ── */
+  const key   = RISK_KEYS[riskIdx];
+  const color = RISK_COLORS[key];
+
+  $("sec3Heading").textContent = t.name + " — Risk Level";
+  $("rhWord").textContent = RISK_SHORT[riskIdx];
+  $("rhWord").style.color = color;
+  $("rhSub").textContent  = subText;
+  $("rhGlow").style.background = `radial-gradient(circle,${color}25,transparent 68%)`;
+
+  // Reset band bar
+  for(let i = 0; i < 4; i++){
+    const s = $(`bs${i}`);
+    s.style.background = "rgba(255,255,255,.15)";
+    s.style.boxShadow  = "";
+  }
+  // Animate segments to current risk level
+  setTimeout(() => {
+    for(let i = 0; i <= riskIdx; i++){
+      const s = $(`bs${i}`);
+      const c2 = RISK_COLORS[RISK_KEYS[i]];
+      setTimeout(() => {
+        s.style.background = c2;
+        s.style.boxShadow  = `0 0 10px ${c2}88`;
+      }, i * 90);
+    }
+  }, 120);
+
+  // Info rows
+  $("infoBlock").innerHTML = displayRows.map(r => {
+    const valClass = r.isRisk ? `ir-val risk" style="color:${r.color}` : "ir-val";
+    return `<div class="info-row">
+      <span class="ir-key">${r.k}</span>
+      <span class="${valClass}">${r.v}</span>
+    </div>`;
+  }).join("");
+
+  // Source citation
+  const c = t.cite;
+  $("sourceText").innerHTML =
+    `<a href="${c.url}" target="_blank" rel="noopener">${c.cite_label || c.label}</a>
+     <span style="display:block;margin-top:5px">${c.meta}</span>`;
+
+  // Show panel
+  const panel = $("resultPanel");
+  panel.classList.remove("show");
+  void panel.offsetWidth; // force reflow for re-animation
+  panel.classList.add("show");
+
+  setProgress(100, "Done!");
+  setTimeout(() => $("sec3").scrollIntoView({ behavior:"smooth", block:"start" }), 100);
+}
+
+/* ── Events ──────────────────────────────────────────────────────── */
+$("calcBtn").addEventListener("click", calculate);
+
+// Enter key support on any input inside dynamicInputs
+$("dynamicInputs").addEventListener("keydown", e => {
+  if(e.key === "Enter") calculate();
+});
+
+// Unit system change — rebuild inputs preserving values where possible
+$("unitSys").addEventListener("change", () => {
+  useMetric = $("unitSys").value === "metric";
+  buildInputs();
+});
+
+$("tryAgainBtn").addEventListener("click", () => {
+  $("sec1").scrollIntoView({ behavior:"smooth", block:"start" });
+  setProgress(0, "Select test");
+});
+
+$("citesToggle").addEventListener("click", () => {
+  const open = $("citesBody").classList.toggle("open");
+  $("citesToggle").classList.toggle("open", open);
+});
+
+/* ── Init ────────────────────────────────────────────────────────── */
+renderCards();
+syncForm();
+buildAllCites();
+setProgress(0, "Select test");
+</script>
+</body>
+</html>
