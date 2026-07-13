@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PE 103 | Weekly Climbing Journal</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<style>
+  /* Print styles only — all other styles are inline per spec */
+  @media print {
+    .no-print { display: none !important; }
+    body { font-size: 13px; }
+    textarea { border: 1px solid #999 !important; min-height: 200px !important; }
+  }
+  /* Focus visible for WCAG 2.2 AA */
+  :focus-visible {
+    outline: 3px solid #2979c4;
+    outline-offset: 2px;
+  }
+</style>
+</head>
+<body style="margin:0; padding:0; background-color:#f0f4f9; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; font-size:16px; line-height:1.65; color:#1a1a1a;">
+
+<!-- ============================================================
+     HEADER BANNER
+     ============================================================ -->
+<header role="banner" style="background-color:#1a3a5c; padding:20px 16px 18px 16px;">
+  <p style="margin:0 0 4px 0; font-size:12px; font-weight:600; letter-spacing:0.08em; text-transform:uppercase; color:#a8c8f0;">
+    PE 103 | Rock Climbing Lifestyles — Dawson College
+  </p>
+  <h1 style="margin:0 0 2px 0; font-size:22px; font-weight:700; line-height:1.2; color:#ffffff;">
+    Weekly Climbing Journal
+  </h1>
+  <p style="margin:0; font-size:14px; color:#c8dff5; font-style:italic;">
+    Select your entry below to begin
+  </p>
+</header>
+
+<!-- ============================================================
+     MAIN CONTENT
+     ============================================================ -->
+<main id="main-content" role="main" style="padding:16px 16px 48px 16px; max-width:700px; margin:0 auto;">
+
+  <!-- ── ENTRY SELECTOR ── -->
+  <section aria-labelledby="selector-heading" style="margin-top:20px;">
+    <div style="background-color:#ffffff; border-radius:12px; padding:18px 16px; box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+      <label id="selector-heading" for="entry-select" style="display:block; font-size:13px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#1a3a5c; margin-bottom:8px;">
+        Select Journal Entry
+      </label>
+      <select id="entry-select"
+              aria-describedby="selector-hint"
+              onchange="loadEntry(this.value)"
+              style="width:100%; padding:12px 14px; font-size:16px; font-weight:600; color:#1a1a1a; background-color:#f0f4f9; border:2px solid #2979c4; border-radius:8px; appearance:none; -webkit-appearance:none; background-image:url('data:image/svg+xml;charset=UTF-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2216%22 height=%2216%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%231a3a5c%22 stroke-width=%222.5%22><polyline points=%226 9 12 15 18 9%22/></svg>'); background-repeat:no-repeat; background-position:right 14px center; cursor:pointer;">
+        <option value="">— Choose your entry —</option>
+        <option value="1">Journal Entry 1</option>
+        <option value="2">Journal Entry 2</option>
+        <option value="3">Journal Entry 3</option>
+        <option value="4">Journal Entry 4</option>
+        <option value="5">Journal Entry 5</option>
+        <option value="6">Journal Entry 6</option>
+        <option value="7">Journal Entry 7</option>
+      </select>
+      <p id="selector-hint" style="margin:8px 0 0 0; font-size:13px; color:#4a5a6a;">
+        Session number and prompt will fill in automatically.
+      </p>
+    </div>
+  </section>
+
+  <!-- ── DYNAMIC CONTENT — hidden until entry selected ── -->
+  <div id="journal-content" aria-live="polite" style="display:none;">
+
+    <!-- ENTRY HEADER -->
+    <section aria-labelledby="entry-title" style="margin-top:16px;">
+      <div style="background-color:#1a3a5c; border-radius:12px; padding:16px 16px 14px 16px;">
+        <p id="entry-eyebrow" style="margin:0 0 4px 0; font-size:12px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#a8c8f0;"></p>
+        <h2 id="entry-title" style="margin:0 0 10px 0; font-size:18px; font-weight:700; color:#ffffff; line-height:1.3;"></h2>
+        <div id="lo-badges" style="display:flex; flex-wrap:wrap; gap:6px;"></div>
+      </div>
+    </section>
+
+    <!-- SESSION DATA -->
+    <section aria-labelledby="session-data-heading" style="margin-top:16px;">
+      <div style="background-color:#ffffff; border-radius:12px; padding:18px 16px; box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+
+        <h3 id="session-data-heading" style="margin:0 0 14px 0; font-size:13px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#1a3a5c; border-bottom:2px solid #e4ecf5; padding-bottom:8px;">
+          Session Data
+        </h3>
+
+        <!-- Row 1: Date + Session # — stacked vertically, both locked -->
+        <div style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;">
+
+          <div>
+            <p style="margin:0 0 4px 0; font-size:13px; font-weight:600; color:#1a3a5c;">Date</p>
+            <div id="field-date"
+                 aria-label="Date — auto-filled, cannot be changed"
+                 style="width:100%; padding:10px 12px; font-size:15px; font-weight:700; color:#1a3a5c; background-color:#e8f0fb; border:1.5px solid #b0bece; border-radius:7px; box-sizing:border-box; user-select:none; -webkit-user-select:none;">
+            </div>
+          </div>
+
+          <div>
+            <p style="margin:0 0 4px 0; font-size:13px; font-weight:600; color:#1a3a5c;">Session #</p>
+            <div id="field-session"
+                 aria-label="Session number — auto-filled when entry is selected"
+                 style="width:100%; padding:10px 12px; font-size:15px; font-weight:700; color:#1a3a5c; background-color:#e8f0fb; border:1.5px solid #b0bece; border-radius:7px; box-sizing:border-box; user-select:none; -webkit-user-select:none;">
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Row 2: Location -->
+        <fieldset style="border:none; margin:0 0 14px 0; padding:0;">
+          <legend style="font-size:13px; font-weight:600; color:#1a3a5c; margin-bottom:6px;">Location</legend>
+          <div style="display:flex; gap:16px; flex-wrap:wrap;">
+            <label style="display:flex; align-items:center; gap:7px; font-size:15px; color:#1a1a1a; cursor:pointer;">
+              <input type="radio" name="location" value="Dawson PARC"
+                     style="width:18px; height:18px; accent-color:#2979c4; cursor:pointer;">
+              Dawson PARC
+            </label>
+            <label style="display:flex; align-items:center; gap:7px; font-size:15px; color:#1a1a1a; cursor:pointer;">
+              <input type="radio" name="location" value="Café Bloc"
+                     style="width:18px; height:18px; accent-color:#2979c4; cursor:pointer;">
+              Café Bloc
+            </label>
+          </div>
+        </fieldset>
+
+        <!-- DIVIDER -->
+        <hr aria-hidden="true" style="border:none; border-top:1.5px solid #e4ecf5; margin:2px 0 14px 0;">
+
+        <!-- Row 3: RPE + Talk Test -->
+        <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:14px;">
+
+          <div style="flex:1; min-width:140px;">
+            <label for="field-rpe" style="display:block; font-size:13px; font-weight:600; color:#1a3a5c; margin-bottom:4px;">
+              RPE (1–10)
+            </label>
+            <select id="field-rpe" name="rpe"
+                    style="width:100%; padding:10px 12px; font-size:15px; color:#1a1a1a; background-color:#f0f4f9; border:1.5px solid #b0bece; border-radius:7px; appearance:none; -webkit-appearance:none; background-image:url('data:image/svg+xml;charset=UTF-8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2214%22 height=%2214%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%231a3a5c%22 stroke-width=%222.5%22><polyline points=%226 9 12 15 18 9%22/></svg>'); background-repeat:no-repeat; background-position:right 12px center;">
+              <option value="">— Select —</option>
+              <option value="1">1 — Rest</option>
+              <option value="2">2 — Very light</option>
+              <option value="3">3 — Light</option>
+              <option value="4">4 — Moderate</option>
+              <option value="5">5 — Somewhat hard</option>
+              <option value="6">6 — Hard</option>
+              <option value="7">7 — Very hard</option>
+              <option value="8">8 — Very hard +</option>
+              <option value="9">9 — Near max</option>
+              <option value="10">10 — Maximum</option>
+            </select>
+          </div>
+
+          <div style="flex:1.5; min-width:180px;">
+            <fieldset style="border:none; margin:0; padding:0;">
+              <legend style="font-size:13px; font-weight:600; color:#1a3a5c; margin-bottom:6px;">Talk Test</legend>
+              <div style="display:flex; flex-direction:column; gap:6px;">
+                <label style="display:flex; align-items:center; gap:7px; font-size:14px; color:#1a1a1a; cursor:pointer;">
+                  <input type="radio" name="talk-test" value="Easy"
+                         style="width:17px; height:17px; accent-color:#2979c4; cursor:pointer;">
+                  Easy — full sentences
+                </label>
+                <label style="display:flex; align-items:center; gap:7px; font-size:14px; color:#1a1a1a; cursor:pointer;">
+                  <input type="radio" name="talk-test" value="Challenged"
+                         style="width:17px; height:17px; accent-color:#2979c4; cursor:pointer;">
+                  Challenged — short phrases
+                </label>
+                <label style="display:flex; align-items:center; gap:7px; font-size:14px; color:#1a1a1a; cursor:pointer;">
+                  <input type="radio" name="talk-test" value="Could not speak"
+                         style="width:17px; height:17px; accent-color:#2979c4; cursor:pointer;">
+                  Could not speak
+                </label>
+              </div>
+            </fieldset>
+          </div>
+
+        </div>
+
+        <!-- DIVIDER -->
+        <hr aria-hidden="true" style="border:none; border-top:1.5px solid #e4ecf5; margin:2px 0 14px 0;">
+
+        <!-- Row 4: Climbing Log -->
+        <h4 style="margin:0 0 10px 0; font-size:13px; font-weight:700; letter-spacing:0.05em; text-transform:uppercase; color:#4a5a6a;">
+          Climbing Log
+        </h4>
+
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+
+          <div style="flex:1; min-width:120px;">
+            <label for="field-attempted" style="display:block; font-size:13px; font-weight:600; color:#1a3a5c; margin-bottom:4px;">
+              Routes attempted
+            </label>
+            <input type="text" id="field-attempted" name="attempted"
+                   inputmode="numeric" pattern="[0-9]*"
+                   placeholder="0"
+                   style="width:100%; padding:10px 12px; font-size:15px; color:#1a1a1a; background-color:#f0f4f9; border:1.5px solid #b0bece; border-radius:7px; box-sizing:border-box;">
+          </div>
+
+          <div style="flex:2; min-width:180px;">
+            <label for="field-grades" style="display:block; font-size:13px; font-weight:600; color:#1a3a5c; margin-bottom:4px;">
+              Grades climbed
+            </label>
+            <input type="text" id="field-grades" name="grades"
+                   placeholder="e.g. V0–V2, 5.8"
+                   aria-describedby="grades-hint"
+                   style="width:100%; padding:10px 12px; font-size:15px; color:#1a1a1a; background-color:#f0f4f9; border:1.5px solid #b0bece; border-radius:7px; box-sizing:border-box;">
+            <p id="grades-hint" style="margin:4px 0 0 0; font-size:12px; color:#4a5a6a;">V-grade for bouldering, YDS for top-rope</p>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- JOURNAL PROMPT -->
+    <section aria-labelledby="prompt-heading" style="margin-top:16px;">
+      <div style="background-color:#ffffff; border-radius:12px; padding:18px 16px; box-shadow:0 1px 4px rgba(0,0,0,0.08);">
+
+        <h3 id="prompt-heading" style="margin:0 0 12px 0; font-size:13px; font-weight:700; letter-spacing:0.06em; text-transform:uppercase; color:#1a3a5c; border-bottom:2px solid #e4ecf5; padding-bottom:8px;">
+          Journal Prompt
+        </h3>
+
+        <!-- Prompt display box -->
+        <div id="prompt-display"
+             role="region"
+             aria-label="Journal prompt"
+             style="background-color:#e8f0fb; border-left:4px solid #2979c4; border-radius:0 8px 8px 0; padding:14px 16px; margin-bottom:16px; font-size:15px; color:#1a1a1a; line-height:1.7; font-style:italic;">
+        </div>
+
+        <!-- Response textarea -->
+        <label for="field-response" style="display:block; font-size:13px; font-weight:600; color:#1a3a5c; margin-bottom:6px;">
+          Your response
+        </label>
+        <textarea id="field-response" name="response"
+                  rows="10"
+                  placeholder="Write your response here. A one-sentence answer will not be sufficient — your response should engage specifically with the question using evidence from today's session."
+                  aria-describedby="response-hint"
+                  style="width:100%; padding:12px 14px; font-size:15px; color:#1a1a1a; background-color:#f9fafb; border:1.5px solid #b0bece; border-radius:8px; box-sizing:border-box; resize:vertical; line-height:1.7; font-family:inherit;"></textarea>
+
+        <!-- So What prompt -->
+        <div id="response-hint" style="margin-top:12px; background-color:#fff8e6; border-left:4px solid #d48a00; border-radius:0 8px 8px 0; padding:12px 14px;">
+          <p style="margin:0; font-size:14px; color:#5a3a00; line-height:1.6;">
+            <strong>⚑ SO WHAT?</strong> Before you finish: Have you named a specific example from today's session? Have you justified your reasoning — not just described what happened? Have you stated what this means for your program going forward?
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- GENERATE SUMMARY BUTTON -->
+    <div style="margin-top:20px; text-align:center;">
+      <button onclick="generateSummary()"
+              aria-controls="summary-panel"
+              style="width:100%; max-width:400px; display:inline-block; background-color:#1a3a5c; color:#ffffff; font-size:16px; font-weight:700; padding:16px 24px; border:none; border-radius:10px; cursor:pointer; letter-spacing:0.02em; line-height:1.3;">
+        📋 Generate Summary for Submission
+      </button>
+    </div>
+
+  </div>
+  <!-- end #journal-content -->
+
+  <!-- SUMMARY PANEL — generated on button press -->
+  <div id="summary-panel" aria-live="polite" style="display:none; margin-top:24px; padding-bottom:24px;">
+
+    <!-- Instruction above card -->
+    <p style="text-align:center; font-size:13px; font-weight:700; color:#1a3a5c; letter-spacing:0.05em; text-transform:uppercase; margin:0 0 10px 0;">
+      📸 Screenshot the card below and upload to Moodle
+    </p>
+
+    <!-- SUMMARY CARD — screenshot target, mobile-width constrained -->
+    <div id="summary-card"
+         style="background-color:#ffffff; border:2.5px solid #1a3a5c; border-radius:14px; overflow:hidden; max-width:420px; margin:0 auto; font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;">
+
+      <!-- Card header -->
+      <div style="background-color:#1a3a5c; padding:11px 14px 10px 14px;">
+        <p style="margin:0 0 1px 0; font-size:10px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:#a8c8f0;">
+          PE 103 | Rock Climbing Lifestyles — Dawson College
+        </p>
+        <p id="sum-entry-label" style="margin:0 0 6px 0; font-size:15px; font-weight:700; color:#ffffff; line-height:1.3;"></p>
+        <div id="sum-lo-badges" style="display:flex; flex-wrap:wrap; gap:5px;"></div>
+      </div>
+
+      <!-- Session data strip -->
+      <div style="background-color:#e8f0fb; padding:9px 14px; border-bottom:1.5px solid #c8d8ec;">
+        <div style="display:flex; flex-wrap:wrap; gap:4px 18px;">
+          <div>
+            <div style="font-size:9px; font-weight:700; text-transform:uppercase; color:#4a5a6a; letter-spacing:0.05em;">Date</div>
+            <div id="sum-date" style="font-size:13px; font-weight:700; color:#1a3a5c;"></div>
+          </div>
+          <div>
+            <div style="font-size:9px; font-weight:700; text-transform:uppercase; color:#4a5a6a; letter-spacing:0.05em;">Session</div>
+            <div id="sum-session" style="font-size:13px; font-weight:700; color:#1a3a5c;"></div>
+          </div>
+          <div>
+            <div style="font-size:9px; font-weight:700; text-transform:uppercase; color:#4a5a6a; letter-spacing:0.05em;">Location</div>
+            <div id="sum-location" style="font-size:13px; font-weight:700; color:#1a3a5c;"></div>
+          </div>
+          <div>
+            <div style="font-size:9px; font-weight:700; text-transform:uppercase; color:#4a5a6a; letter-spacing:0.05em;">RPE</div>
+            <div id="sum-rpe" style="font-size:13px; font-weight:700; color:#1a3a5c;"></div>
+          </div>
+          <div>
+            <div style="font-size:9px; font-weight:700; text-transform:uppercase; color:#4a5a6a; letter-spacing:0.05em;">Talk Test</div>
+            <div id="sum-talk" style="font-size:13px; font-weight:700; color:#1a3a5c;"></div>
+          </div>
+          <div>
+            <div style="font-size:9px; font-weight:700; text-transform:uppercase; color:#4a5a6a; letter-spacing:0.05em;">Attempted</div>
+            <div id="sum-attempted" style="font-size:13px; font-weight:700; color:#1a3a5c;"></div>
+          </div>
+          <div>
+            <div style="font-size:9px; font-weight:700; text-transform:uppercase; color:#4a5a6a; letter-spacing:0.05em;">Grades</div>
+            <div id="sum-grades" style="font-size:13px; font-weight:700; color:#1a3a5c;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Prompt -->
+      <div style="padding:9px 14px; border-bottom:1.5px solid #e4ecf5; background-color:#f9fafb;">
+        <div style="font-size:9px; font-weight:700; text-transform:uppercase; color:#4a5a6a; letter-spacing:0.05em; margin-bottom:4px;">Prompt</div>
+        <p id="sum-prompt" style="margin:0; font-size:11px; color:#1a1a1a; line-height:1.55; font-style:italic;"></p>
+      </div>
+
+      <!-- Response -->
+      <div style="padding:9px 14px; border-bottom:1.5px solid #e4ecf5;">
+        <div style="font-size:9px; font-weight:700; text-transform:uppercase; color:#4a5a6a; letter-spacing:0.05em; margin-bottom:5px;">Response</div>
+        <p id="sum-response" style="margin:0; font-size:12px; color:#1a1a1a; line-height:1.65; white-space:pre-wrap; word-break:break-word;"></p>
+      </div>
+
+      <!-- Incomplete fields warning — conditionally shown -->
+      <div id="sum-warning" style="display:none; padding:8px 14px; background-color:#fde8e8; border-bottom:1.5px solid #e0b0b0;">
+        <p id="sum-warning-text" style="margin:0; font-size:11px; font-weight:700; color:#7a1a1a; line-height:1.5;"></p>
+      </div>
+
+      <!-- Card footer -->
+      <div style="background-color:#1a3a5c; padding:7px 14px; display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:10px; color:#a8c8f0;">109-103-MQ</span>
+        <span id="sum-timestamp" style="font-size:10px; color:#c8dff5; font-weight:600;"></span>
+      </div>
+
+    </div>
+    <!-- end #summary-card -->
+
+    <!-- Edit reminder below card -->
+    <div style="max-width:420px; margin:10px auto 0 auto; background-color:#fff8e6; border-left:4px solid #d48a00; border-radius:0 8px 8px 0; padding:10px 14px;">
+      <p style="margin:0; font-size:13px; color:#5a3a00; line-height:1.6;">
+        Need to edit? Scroll back up, make your changes, then press the button again to refresh this card.
+      </p>
+    </div>
+
+  </div>
+  <!-- end #summary-panel -->
+
+  <!-- PLACEHOLDER — shown before entry is selected -->
+  <div id="placeholder" style="margin-top:32px; text-align:center; padding:32px 16px; color:#4a5a6a;">
+    <p style="margin:0; font-size:38px;" aria-hidden="true">🧗</p>
+    <p style="margin:8px 0 0 0; font-size:15px; color:#4a5a6a;">Select a journal entry above to get started.</p>
+  </div>
+
+</main>
+
+<!-- ============================================================
+     FOOTER
+     ============================================================ -->
+<footer role="contentinfo" class="no-print" style="background-color:#1a3a5c; padding:14px 16px; text-align:center; font-size:13px; color:#a8c8f0; margin-top:24px;">
+  PE 103 — Rock Climbing Lifestyles &nbsp;|&nbsp; Dawson College &nbsp;|&nbsp; 109-103-MQ
+</footer>
+
+<!-- ============================================================
+     JAVASCRIPT — Entry data and dynamic population
+     ============================================================ -->
+<script>
+// Auto-populate today's date on load — rendered as text, cannot be edited
+(function() {
+  const today = new Date();
+  const months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const display = months[today.getMonth()] + " " + today.getDate() + ", " + today.getFullYear();
+  document.getElementById("field-date").textContent = display;
+  // Store ISO value as data attribute for summary card
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, "0");
+  const dd = String(today.getDate()).padStart(2, "0");
+  document.getElementById("field-date").setAttribute("data-iso", yyyy + "-" + mm + "-" + dd);
+})();
+
+const ENTRIES = {
+  "1": {
+    session: "3",
+    title: "Personal Goal & Vision of Success",
+    lo: ["LO1 — Supporting"],
+    prompt: "What is your single most important climbing goal for this course, and why is this the right goal for you specifically, over other goals you considered, given your current level, time constraints, and motivational factors?"
+  },
+  "2": {
+    session: "4",
+    title: "Bouldering Intro: Physical & Mental Challenge",
+    lo: ["LO3 — Primary"],
+    prompt: "Which physical or mental barrier most limited your climbing today, and what does it reveal about the most critical gap your personal activity program needs to address going forward?"
+  },
+  "3": {
+    session: "5",
+    title: "Café Bloc 1: Unexpected Experience & Response",
+    lo: ["LO3 — Primary"],
+    prompt: "What was the biggest gap between what you expected from today's session and what you actually experienced, and what does that gap reveal about what your program planning failed to account for?"
+  },
+  "4": {
+    session: "6",
+    title: "Intensity/Recovery Balance: Evidence & Judgment",
+    lo: ["LO3 — Primary"],
+    prompt: "Using your body's signals from today's session as evidence, assess whether your current intensity and recovery balance is appropriate for your program goals, and justify any adjustment you need to make before your next session."
+  },
+  "5": {
+    session: "7",
+    title: "Part A Plan Review: What Holds, What Would You Revise",
+    lo: ["LO1 — Supporting", "LO3 — Primary"],
+    prompt: "Evaluate one specific element of your Part A program plan that is working as you designed it and one that is not and justify the precise revision you would make based on what your climbing experience has revealed so far."
+  },
+  "6": {
+    session: "8",
+    title: "Community Influence on Motivation",
+    lo: ["LO3 — Primary"],
+    prompt: "How did the social environment of today's session influence your motivation or climbing decisions, and evaluate whether that kind of community-driven engagement will genuinely support or complicate your ability to stay active independently after this course ends?"
+  },
+  "7": {
+    session: "9",
+    title: "Mindset Shift & Core Tracking Evaluation",
+    lo: ["LO3 — Primary"],
+    prompt: "Looking back to Session 3, evaluate the most significant change in how you think about or approach physical activity and using your session log or climbing progress as evidence, assess whether that change is genuine enough to sustain self-directed participation after this course ends."
+  }
+};
+
+// LO badge colour map — text-based, colour is supplementary not sole conveyor
+const LO_STYLES = {
+  "LO1 — Supporting": "background-color:#e8f0fb; color:#1a3a5c; border:1.5px solid #2979c4;",
+  "LO3 — Primary":    "background-color:#e8f5ee; color:#0a4a2c; border:1.5px solid #1d9e75;"
+};
+
+function generateSummary() {
+  // Collect field values
+  const entryVal   = document.getElementById("entry-select").value;
+  const date       = document.getElementById("field-date").textContent;
+  const session    = document.getElementById("field-session").textContent;
+  const rpeEl      = document.getElementById("field-rpe");
+  const rpe        = rpeEl.options[rpeEl.selectedIndex] ? rpeEl.options[rpeEl.selectedIndex].text : "";
+  const talkEl     = document.querySelector('input[name="talk-test"]:checked');
+  const talk       = talkEl ? talkEl.value : "";
+  const locationEl = document.querySelector('input[name="location"]:checked');
+  const location   = locationEl ? locationEl.value : "";
+  const attempted  = document.getElementById("field-attempted").value;
+  const grades     = document.getElementById("field-grades").value;
+  const response   = document.getElementById("field-response").value.trim();
+
+  if (!entryVal) {
+    alert("Please select a journal entry first.");
+    return;
+  }
+
+  const entry = ENTRIES[entryVal];
+
+  // Populate card header
+  document.getElementById("sum-entry-label").textContent =
+    "Journal Entry " + entryVal + " — " + entry.title;
+
+  // LO badges in card
+  const sumBadges = document.getElementById("sum-lo-badges");
+  sumBadges.innerHTML = "";
+  entry.lo.forEach(function(lo) {
+    const b = document.createElement("span");
+    b.textContent = lo;
+    const baseStyle = "display:inline-block; font-size:10px; font-weight:700; letter-spacing:0.04em; padding:2px 8px; border-radius:20px; ";
+    b.setAttribute("style", baseStyle + (LO_STYLES[lo] || "background-color:#f0f4f9; color:#1a1a1a; border:1px solid #b0bece;"));
+    sumBadges.appendChild(b);
+  });
+
+  // Populate data fields
+  document.getElementById("sum-date").textContent      = date || "—";
+  document.getElementById("sum-session").textContent   = session || "—";
+  document.getElementById("sum-location").textContent  = location || "—";
+  document.getElementById("sum-rpe").textContent       = rpe || "—";
+  document.getElementById("sum-talk").textContent      = talk || "—";
+  document.getElementById("sum-attempted").textContent = attempted || "—";
+  document.getElementById("sum-grades").textContent    = grades || "—";
+
+  // Prompt
+  document.getElementById("sum-prompt").textContent = entry.prompt;
+
+  // Response
+  document.getElementById("sum-response").textContent = response || "(No response entered)";
+
+  // Timestamp
+  const now = new Date();
+  const hh = String(now.getHours()).padStart(2, "0");
+  const min = String(now.getMinutes()).padStart(2, "0");
+  document.getElementById("sum-timestamp").textContent = "Generated " + hh + ":" + min;
+
+  // Incomplete fields warning
+  const missing = [];
+  if (!location)  missing.push("Location");
+  if (!rpe || rpe === "— Select —") missing.push("RPE");
+  if (!talk)      missing.push("Talk Test");
+  if (!response)  missing.push("Response");
+
+  const warningEl = document.getElementById("sum-warning");
+  const warningText = document.getElementById("sum-warning-text");
+  if (missing.length > 0) {
+    warningText.textContent = "⚠ Incomplete fields: " + missing.join(", ") + ". Your teacher will see these gaps.";
+    warningEl.style.display = "block";
+  } else {
+    warningEl.style.display = "none";
+  }
+
+  // Show panel and scroll to it
+  const panel = document.getElementById("summary-panel");
+  panel.style.display = "block";
+  panel.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+function loadEntry(value) {
+  const content  = document.getElementById("journal-content");
+  const placeholder = document.getElementById("placeholder");
+
+  if (!value) {
+    content.style.display = "none";
+    placeholder.style.display = "block";
+    return;
+  }
+
+  const entry = ENTRIES[value];
+  if (!entry) return;
+
+  // Populate eyebrow
+  document.getElementById("entry-eyebrow").textContent =
+    "Journal Entry " + value + "  |  Session " + entry.session;
+
+  // Populate title
+  document.getElementById("entry-title").textContent = entry.title;
+
+  // Populate LO badges
+  const badgeContainer = document.getElementById("lo-badges");
+  badgeContainer.innerHTML = "";
+  entry.lo.forEach(function(lo) {
+    const badge = document.createElement("span");
+    badge.textContent = lo;
+    const baseStyle = "display:inline-block; font-size:12px; font-weight:700; letter-spacing:0.05em; padding:3px 10px; border-radius:20px; ";
+    badge.setAttribute("style", baseStyle + (LO_STYLES[lo] || "background-color:#f0f4f9; color:#1a1a1a; border:1.5px solid #b0bece;"));
+    badgeContainer.appendChild(badge);
+  });
+
+  // Auto-populate Session # field
+  document.getElementById("field-session").textContent = "Session " + entry.session;
+
+  // Populate prompt display
+  document.getElementById("prompt-display").textContent = entry.prompt;
+
+  // Clear previous response when switching entries
+  document.getElementById("field-response").value = "";
+
+  // Show content, hide placeholder
+  content.style.display = "block";
+  placeholder.style.display = "none";
+
+  // Scroll to content smoothly
+  content.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+</script>
+
+</body>
+</html>
