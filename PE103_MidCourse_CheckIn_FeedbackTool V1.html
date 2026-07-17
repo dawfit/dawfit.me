@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PE 103 — Mid-Course Check-In | Teacher Feedback</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy: #1a3a5c;
+    --navy-dark: #102540;
+    --blue-light: #c8dff5;
+    --green-bg: #e6f4ea;
+    --green-border: #2d7a3a;
+    --green-text: #1b4d23;
+    --red-bg: #fde8e8;
+    --red-border: #b91c1c;
+    --red-text: #7f1d1d;
+    --amber-bg: #fff8e1;
+    --amber-border: #d97706;
+    --grey-bg: #f5f6f8;
+    --grey-border: #d0d5dd;
+    --body: #1a1a1a;
+    --muted: #4b5563;
+    --font: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  }
+
+  body {
+    font-family: var(--font);
+    background: #eef2f7;
+    color: var(--body);
+    min-height: 100vh;
+    padding: 0 0 60px 0;
+  }
+
+  /* ── Banner ── */
+  .banner {
+    background: var(--navy);
+    color: #fff;
+    padding: 18px 28px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+  }
+  .banner-left { display: flex; flex-direction: column; gap: 2px; }
+  .banner-eyebrow { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue-light); opacity: 0.85; }
+  .banner-title { font-size: 17px; font-weight: 700; color: #fff; }
+  .banner-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 9px 18px; border-radius: 7px; font-size: 13px;
+    font-weight: 600; cursor: pointer; border: none;
+    transition: opacity 0.15s, transform 0.1s;
+    text-decoration: none; white-space: nowrap;
+  }
+  .btn:hover { opacity: 0.88; }
+  .btn:active { transform: scale(0.97); }
+  .btn-ghost { background: rgba(255,255,255,0.12); color: #fff; border: 1px solid rgba(255,255,255,0.25); }
+  .btn-danger { background: #b91c1c; color: #fff; }
+  .btn-accent { background: #2563eb; color: #fff; }
+  .btn-scroll { background: rgba(255,255,255,0.18); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+
+  /* ── Main card shell ── */
+  .main { max-width: 860px; margin: 28px auto; padding: 0 16px; }
+
+  .card {
+    background: #fff;
+    border-radius: 12px;
+    border: 1px solid var(--grey-border);
+    margin-bottom: 20px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  .card-header {
+    background: var(--navy);
+    color: #fff;
+    padding: 13px 20px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .card-body { padding: 20px; }
+
+  .field-group { display: flex; flex-direction: column; gap: 5px; }
+  .field-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.09em;
+    text-transform: uppercase; color: var(--muted);
+  }
+  .field-input {
+    border: 1.5px solid var(--grey-border);
+    border-radius: 7px; padding: 9px 12px;
+    font-size: 14px; font-family: var(--font);
+    color: var(--body); background: #fafbfc;
+    transition: border-color 0.15s;
+    width: 100%;
+  }
+  .field-input:focus { outline: none; border-color: #2563eb; background: #fff; }
+  textarea.field-input { resize: vertical; min-height: 70px; }
+
+  /* ── Pass / Fail Decision ── */
+  .pf-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 520px) { .pf-grid { grid-template-columns: 1fr; } }
+
+  .pf-option { display: none; }
+  .pf-label {
+    display: flex; align-items: flex-start; gap: 12px;
+    border: 2px solid var(--grey-border);
+    border-radius: 10px; padding: 14px 16px;
+    cursor: pointer; transition: border-color 0.15s, background 0.15s;
+    user-select: none;
+  }
+  .pf-option:checked + .pf-label.pass-label {
+    border-color: var(--green-border);
+    background: var(--green-bg);
+  }
+  .pf-option:checked + .pf-label.fail-label {
+    border-color: var(--red-border);
+    background: var(--red-bg);
+  }
+  .pf-icon { font-size: 22px; line-height: 1; flex-shrink: 0; margin-top: 2px; }
+  .pf-text-block { display: flex; flex-direction: column; gap: 3px; }
+  .pf-title { font-size: 15px; font-weight: 700; }
+  .pass-label .pf-title { color: var(--green-text); }
+  .fail-label .pf-title { color: var(--red-text); }
+  .pf-subtitle { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+  /* ── Flag checkboxes ── */
+  .flag-section {
+    background: var(--grey-bg);
+    border: 1px solid var(--grey-border);
+    border-radius: 9px;
+    padding: 14px 16px;
+    margin-top: 6px;
+  }
+  .flag-section-title {
+    font-size: 12px; font-weight: 700; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+  }
+  .flag-grid { display: flex; flex-direction: column; gap: 8px; }
+  .flag-item {
+    display: flex; align-items: flex-start; gap: 10px;
+    font-size: 13.5px; color: var(--body); line-height: 1.45;
+  }
+  .flag-item input[type="checkbox"] {
+    width: 17px; height: 17px; flex-shrink: 0; margin-top: 1px;
+    accent-color: var(--red-border); cursor: pointer;
+  }
+  .flag-item label { cursor: pointer; }
+
+  /* ── Screenshot summary panel ── */
+  #summary-panel {
+    background: #fff;
+    border: 2px solid var(--navy);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(26,58,92,0.12);
+    margin-top: 30px;
+  }
+  .summary-banner {
+    background: var(--navy);
+    color: #fff;
+    padding: 14px 22px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .summary-body { padding: 22px; }
+
+  .summary-field { display: flex; flex-direction: column; gap: 2px; }
+  .summary-field-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); }
+  .summary-field-value { font-size: 14px; font-weight: 600; color: var(--body); }
+
+  .verdict-row {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    margin-bottom: 18px;
+  }
+  @media (max-width: 520px) { .verdict-row { grid-template-columns: 1fr; } }
+
+  .verdict-box {
+    border-radius: 9px; padding: 13px 16px; border: 2px solid transparent;
+    opacity: 0.35; transition: opacity 0.2s;
+  }
+  .verdict-box.active { opacity: 1; }
+  .verdict-pass { background: var(--green-bg); border-color: var(--green-border); }
+  .verdict-fail { background: var(--red-bg); border-color: var(--red-border); }
+  .verdict-label { font-size: 15px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+  .verdict-pass .verdict-label { color: var(--green-text); }
+  .verdict-fail .verdict-label { color: var(--red-text); }
+  .verdict-sub { font-size: 12px; margin-top: 4px; color: var(--muted); line-height: 1.4; }
+
+  .summary-comment-block {
+    background: var(--grey-bg); border-radius: 9px; padding: 14px 16px; margin-bottom: 14px;
+  }
+  .summary-comment-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.09em; color: var(--muted); margin-bottom: 6px; }
+  .summary-comment-text { font-size: 14px; color: var(--body); white-space: pre-wrap; min-height: 20px; line-height: 1.55; }
+
+  .summary-flags-block { margin-top: 6px; }
+  .summary-flag-list { display: flex; flex-direction: column; gap: 5px; margin-top: 8px; }
+  .summary-flag-item {
+    font-size: 13.5px; color: var(--red-text);
+    background: var(--red-bg); border: 1px solid #fca5a5;
+    border-radius: 6px; padding: 6px 12px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .summary-flag-item::before { content: '⚑'; font-size: 12px; }
+
+  .no-flags-msg { font-size: 13px; color: var(--muted); font-style: italic; margin-top: 6px; }
+
+  /* ── Print hint ── */
+  .print-hint {
+    text-align: center; font-size: 12px; color: var(--muted);
+    padding: 12px; border-top: 1px solid var(--grey-border);
+    background: var(--grey-bg);
+  }
+
+  /* ── Focus ring for accessibility ── */
+  :focus-visible { outline: 3px solid #2563eb; outline-offset: 2px; }
+
+  @media print {
+    .banner, .btn { display: none !important; }
+    body { background: #fff; padding: 0; }
+    .main { margin: 0; padding: 0; max-width: 100%; }
+    .card { box-shadow: none; border: 1px solid #ccc; page-break-inside: avoid; }
+    #summary-panel { margin-top: 16px; }
+    .print-hint { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     STICKY BANNER
+════════════════════════════════════════════ -->
+<header class="banner" role="banner">
+  <div class="banner-left">
+    <span class="banner-eyebrow">PE 103 — Rock Climbing Lifestyles · Dawson College</span>
+    <span class="banner-title">Mid-Course Check-In — Teacher Feedback Tool</span>
+  </div>
+
+</header>
+
+<!-- ══════════════════════════════════════════
+     MAIN CONTENT
+════════════════════════════════════════════ -->
+<main class="main" id="main-content">
+
+  <!-- Teacher Decision -->
+  <div class="card" role="region" aria-labelledby="decision-heading">
+    <div class="card-header" id="decision-heading">Teacher Decision &amp; Comment</div>
+    <div class="card-body">
+
+      <!-- Pass / Fail selector -->
+      <fieldset style="border:none; margin-bottom:18px;" aria-labelledby="verdict-legend">
+        <legend id="verdict-legend" class="field-label" style="margin-bottom:12px;">Decision</legend>
+        <div class="pf-grid">
+          <div>
+            <input type="radio" name="verdict" id="verdict-pass" value="pass" class="pf-option" onchange="updateSummary()">
+            <label for="verdict-pass" class="pf-label pass-label">
+              <span class="pf-icon" aria-hidden="true">✅</span>
+              <span class="pf-text-block">
+                <span class="pf-title">PASS</span>
+                <span class="pf-subtitle">All three questions answered with specific log evidence. Part B Session Log submission is authorized.</span>
+              </span>
+            </label>
+          </div>
+          <div>
+            <input type="radio" name="verdict" id="verdict-fail" value="fail" class="pf-option" onchange="updateSummary()">
+            <label for="verdict-fail" class="pf-label fail-label">
+              <span class="pf-icon" aria-hidden="true">❌</span>
+              <span class="pf-text-block">
+                <span class="pf-title">FAIL — resubmission required</span>
+                <span class="pf-subtitle">Flagged items below must be addressed before Part B log will be accepted.</span>
+              </span>
+            </label>
+          </div>
+        </div>
+      </fieldset>
+
+      <!-- Teacher comment -->
+      <div class="field-group" style="margin-bottom:18px;">
+        <label class="field-label" for="teacherComment">Teacher Comment</label>
+        <textarea class="field-input" id="teacherComment" rows="4"
+          placeholder="Enter personalized feedback here. Refer to specific session evidence, objective numbers, or log data where possible."
+          oninput="updateSummary()"></textarea>
+      </div>
+
+      <!-- Flags -->
+      <div class="flag-section">
+        <p class="flag-section-title" id="flags-heading">Items flagged for resubmission (check all that apply)</p>
+        <div class="flag-grid" role="group" aria-labelledby="flags-heading">
+
+          <div class="flag-item">
+            <input type="checkbox" id="flag-q1" onchange="updateSummary()">
+            <label for="flag-q1"><strong>Q1</strong> — no specific log comparison (session count + hours logged vs. Part A schedule)</label>
+          </div>
+
+          <div class="flag-item">
+            <input type="checkbox" id="flag-q2-obj1" onchange="updateSummary()">
+            <label for="flag-q2-obj1"><strong>Q2 Obj 1</strong> — missing log evidence (progress rating present but no session reference cited)</label>
+          </div>
+
+          <div class="flag-item">
+            <input type="checkbox" id="flag-q2-obj2" onchange="updateSummary()">
+            <label for="flag-q2-obj2"><strong>Q2 Obj 2</strong> — missing log evidence (progress rating present but no session reference cited)</label>
+          </div>
+
+          <div class="flag-item">
+            <input type="checkbox" id="flag-q2-adj" onchange="updateSummary()">
+            <label for="flag-q2-adj"><strong>Q2</strong> — adjustment is absent or too vague (no concrete change named, no evidence base identified)</label>
+          </div>
+
+          <div class="flag-item">
+            <input type="checkbox" id="flag-q3" onchange="updateSummary()">
+            <label for="flag-q3"><strong>Q3</strong> — general intention only, no evidence base (e.g. "I'll try harder" without a log data point)</label>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div style="display:flex; gap:12px; justify-content:flex-end; margin-top:22px; padding-top:18px; border-top:1.5px solid var(--grey-border); flex-wrap:wrap;">
+        <button class="btn btn-danger" onclick="resetAll()" aria-label="Reset all fields">
+          ↺ Reset All Fields
+        </button>
+        <button class="btn btn-accent" onclick="scrollToSummary()" aria-label="Jump to screenshot summary">
+          ↓ Jump to Summary
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════
+       SCREENSHOT SUMMARY PANEL
+  ════════════════════════════════════════════ -->
+  <div id="summary-panel" role="region" aria-labelledby="summary-heading" aria-live="polite">
+
+    <div class="summary-banner">
+      <span aria-hidden="true">📋</span>
+      <span id="summary-heading">Feedback Summary — Screenshot This Section</span>
+    </div>
+
+    <div class="summary-body">
+
+      <!-- Verdict boxes -->
+      <div class="verdict-row" role="status">
+        <div class="verdict-box verdict-pass" id="s-pass-box" aria-hidden="false">
+          <div class="verdict-label">
+            <span aria-hidden="true">✅</span> PASS
+          </div>
+          <div class="verdict-sub">Part B Session Log submission is authorized.</div>
+        </div>
+        <div class="verdict-box verdict-fail" id="s-fail-box" aria-hidden="false">
+          <div class="verdict-label">
+            <span aria-hidden="true">❌</span> FAIL — resubmission required
+          </div>
+          <div class="verdict-sub">Flagged items below must be addressed before Part B log will be accepted.</div>
+        </div>
+      </div>
+
+      <!-- Comment -->
+      <div class="summary-comment-block">
+        <div class="summary-comment-label">Teacher Comment</div>
+        <div class="summary-comment-text" id="s-comment"><em style="color:#9ca3af;">No comment entered.</em></div>
+      </div>
+
+      <!-- Flags -->
+      <div class="summary-flags-block">
+        <div class="summary-comment-label">Items Flagged for Resubmission</div>
+        <div class="summary-flag-list" id="s-flags">
+          <span class="no-flags-msg">No items flagged.</span>
+        </div>
+      </div>
+
+    </div><!-- /summary-body -->
+
+    <div class="print-hint">
+      Take a screenshot of this section to share with the student, or use <strong>Ctrl+P / ⌘+P</strong> to print.
+    </div>
+
+  </div><!-- /#summary-panel -->
+
+</main>
+
+<script>
+  /* ── Flag map: id → display label ── */
+  const FLAGS = {
+    'flag-q1':      'Q1 — no specific log comparison',
+    'flag-q2-obj1': 'Q2 Obj 1 — missing log evidence',
+    'flag-q2-obj2': 'Q2 Obj 2 — missing log evidence',
+    'flag-q2-adj':  'Q2 — adjustment is absent or too vague',
+    'flag-q3':      'Q3 — general intention only, no evidence base'
+  };
+
+  function updateSummary() {
+    /* Verdict */
+    const pass = document.getElementById('verdict-pass').checked;
+    const fail = document.getElementById('verdict-fail').checked;
+    document.getElementById('s-pass-box').classList.toggle('active', pass);
+    document.getElementById('s-fail-box').classList.toggle('active', fail);
+    document.getElementById('s-pass-box').setAttribute('aria-label', pass ? 'Decision: PASS (selected)' : 'Decision: PASS (not selected)');
+    document.getElementById('s-fail-box').setAttribute('aria-label', fail ? 'Decision: FAIL (selected)' : 'Decision: FAIL (not selected)');
+
+    /* Comment */
+    const comment = document.getElementById('teacherComment').value.trim();
+    const commentEl = document.getElementById('s-comment');
+    if (comment) {
+      commentEl.textContent = comment;
+      commentEl.style.fontStyle = 'normal';
+    } else {
+      commentEl.innerHTML = '<em style="color:#9ca3af;">No comment entered.</em>';
+    }
+
+    /* Flags */
+    const flagsEl = document.getElementById('s-flags');
+    const active = Object.entries(FLAGS).filter(([id]) => document.getElementById(id).checked);
+    if (active.length === 0) {
+      flagsEl.innerHTML = '<span class="no-flags-msg">No items flagged.</span>';
+    } else {
+      flagsEl.innerHTML = active.map(([,label]) =>
+        `<div class="summary-flag-item">${label}</div>`
+      ).join('');
+    }
+
+
+  }
+
+  function scrollToSummary() {
+    document.getElementById('summary-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function resetAll() {
+    if (!confirm('Reset all fields? This cannot be undone.')) return;
+
+    /* Text inputs */
+    ['teacherComment'].forEach(id => {
+      const el = document.getElementById(id);
+      el.value = '';
+    });
+
+    /* Radio */
+    document.getElementById('verdict-pass').checked = false;
+    document.getElementById('verdict-fail').checked = false;
+
+    /* Checkboxes */
+    Object.keys(FLAGS).forEach(id => {
+      document.getElementById(id).checked = false;
+    });
+
+    updateSummary();
+
+    /* Scroll back to top */
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  /* Init summary on load */
+  updateSummary();
+</script>
+
+</body>
+</html>
